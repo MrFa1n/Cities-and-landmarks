@@ -27,8 +27,8 @@ class ProfileController extends Controller
         }
 
         $profile_id = $data['profile_id'];
-        $check_registered = ProfileFields::whereRaw('profile_id = ?', [$profile_id]);
-        if ($check_registered) {
+        $check_registered = ProfileFields::where('profile_id', $profile_id)->get();
+        if (count($check_registered) != 0) {
             return response(['status'=>'error', 'error' => ['profile_id' => 'Profile already registered']]);
         }
 
