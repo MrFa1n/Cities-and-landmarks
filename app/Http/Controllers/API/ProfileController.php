@@ -4,12 +4,55 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Profile;
+use App\Models\ProfileFields;
+use App\Models\ProfileFieldsTypes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ProfileResource;
 
 class ProfileController extends Controller
 {
+    public function register_profile(Request $request)
+    {
+        $data = $request->all();
+        $fields_types = ProfileFieldsTypes::all();
+        $res = array();
+
+        $validator = Validator::make($data, [
+            'profile_id' => 'required|exists:profiles,id'
+        ]);
+
+        if($validator->fails()){
+            return response(['error' => $validator->errors()]);
+        }
+
+        $profile_id = $data['profile_id'];
+        $check_registered = ProfileFields::whereRaw('profile_id = ?', [$profile_id]);
+        if ($check_registered) {
+            return response(['error' => ['profile_id' => 'Profile already registered']]);
+        }
+
+        foreach($fields_types as $field_type) {
+            if (!array_key_exists($field_type['name'], $data) && !$field_type['default']) {
+                return response(['status' => 'err', 'err_key' => $field_type['name']]);
+            }
+            if (!array_key_exists($field_type['name'], $data) && $field_type['default']) {
+                $data[$field_type['name']] = $field_type['default'];
+            }
+            $res[$field_type['id']] = $data[$field_type['name']];
+        }
+
+        foreach($res as $key => $value) {
+            $field = ProfileFields::create([
+                'profile_id' => $profile_id,
+                'field_type_id' => $key,
+                'value' => $value
+            ]);
+        }
+
+        return response(['result' => $res, 'message' => 'Successfully registered'], 200);
+    }
+
     /**
      * Display a listing of the resource.
      *
