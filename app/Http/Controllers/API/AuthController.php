@@ -25,7 +25,7 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-            return response(['error' => $validator->errors(), 'Validation Error']);
+            return response(['status'=>'error', 'error' => $validator->errors(), 'Validation Error']);
         }
 
         $validatedData = $request->validate([
@@ -42,7 +42,7 @@ class AuthController extends Controller
 
         $accessToken = $user->createToken('authToken')->accessToken;
 
-        return response([ 'user' => $user, 'profile_id' => $profile->id, 'access_token' => $accessToken, 'message' => 'Register successfully', 'fields' => $fields], 200);
+        return response(['status'=>'ok', 'response'=>[ 'user' => $user, 'profile_id' => $profile->id, 'access_token' => $accessToken, 'fields' => $fields]], 200);
     }
 
     public function login(Request $request)
@@ -53,12 +53,12 @@ class AuthController extends Controller
         ]);
 
         if (!auth()->attempt($loginData)) {
-            return response(['message' => 'Invalid Credentials']);
+            return response(['status'=>'error', 'error'=>['message' => 'Invalid Credentials']]);
         }
 
         $accessToken = auth()->user()->createToken('authToken')->accessToken;
 
-        return response(['user' => auth()->user(), 'access_token' => $accessToken, 'message' => 'Login successfully'], 200);
+        return response(['status'=>'ok', 'response'=>['user' => auth()->user(), 'access_token' => $accessToken]], 200);
 
     }
 }

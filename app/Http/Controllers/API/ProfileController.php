@@ -29,12 +29,12 @@ class ProfileController extends Controller
         $profile_id = $data['profile_id'];
         $check_registered = ProfileFields::whereRaw('profile_id = ?', [$profile_id]);
         if ($check_registered) {
-            return response(['error' => ['profile_id' => 'Profile already registered']]);
+            return response(['status'=>'error', 'error' => ['profile_id' => 'Profile already registered']]);
         }
 
         foreach($fields_types as $field_type) {
             if (!array_key_exists($field_type['name'], $data) && !$field_type['default']) {
-                return response(['status' => 'err', 'err_key' => $field_type['name']]);
+                return response(['status' => 'error', 'error' => [$field_type['name'] => 'Field has no default value']]);
             }
             if (!array_key_exists($field_type['name'], $data) && $field_type['default']) {
                 $data[$field_type['name']] = $field_type['default'];
@@ -50,7 +50,7 @@ class ProfileController extends Controller
             ]);
         }
 
-        return response(['result' => $res, 'message' => 'Successfully registered'], 200);
+        return response(['status' => 'ok', 'response' => $res], 200);
     }
 
     /**
