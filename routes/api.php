@@ -22,4 +22,6 @@ Route::post('/register', 'Api\AuthController@register');
 Route::post('/register_profile', 'Api\ProfileController@register_profile');
 Route::post('/login', 'Api\AuthController@login');
 
+Route::get('/profile', 'Api\ProfileController@get_profile');
+
 //Route::apiResource('/ceo', 'Api\CEOController')->middleware('auth:api');

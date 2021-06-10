@@ -58,9 +58,22 @@ class ProfileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function get_profile(Request $request)
     {
-        //
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'profile_id' => 'required|exists:profile_fields,profile_id'
+        ]);
+
+        if($validator->fails()){
+            return response(['error' => $validator->errors()]);
+        }
+
+        $profile_id = $data['profile_id'];
+        $profile = Profile::where('id', $profile_id)->get();
+        $fields = ProfileFields::where('profile_id', $profile_id)->get();
+
+        return response(['status' => 'ok', 'response' => ['profile_id' => $profile_id, 'fields' => $fields]]);
     }
 
     /**
@@ -71,19 +84,7 @@ class ProfileController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
-
-        $validator = Validator::make($data, [
-            'user_id' => 'required|max:255'
-        ]);
-
-        if($validator->fails()){
-            return response(['error' => $validator->errors(), 'Validation Error']);
-        }
-
-        $profile = Profile::create($data);
-
-        return response([ 'profile' => new ProfileResource($profile), 'message' => 'Created successfully'], 200);
+        return response([ 'status' => 'ok', 'response'=>''], 200);
     }
 
     /**
