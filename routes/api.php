@@ -18,8 +18,16 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+//POST
 Route::post('/register', 'Api\AuthController@register');
 Route::post('/register_profile', 'Api\ProfileController@register_profile');
 Route::post('/login', 'Api\AuthController@login');
+Route::post('/match', 'Api\MatchController@match_found');
+Route::post('/gift', 'Api\GiftController@give_a_gift');
 
-//Route::apiResource('/ceo', 'Api\CEOController')->middleware('auth:api');
+//GET(GAY)
+Route::get('/get_match', 'Api\MatchController@get_match');
+Route::get('/get_gift', 'Api\GiftController@get_gift');
+Route::get('/get_profile', 'Api\ProfileController@get_profile');
+Route::get('/get_rec', 'Api\ProfileController@get_recomendations');
+

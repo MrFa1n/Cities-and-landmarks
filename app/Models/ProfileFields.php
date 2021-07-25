@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProfileFields extends Model
 {
-    use HasFactory;
+    //use HasFactory;
     protected $fillable = [
         'profile_id', 'field_type_id', 'value'
     ];

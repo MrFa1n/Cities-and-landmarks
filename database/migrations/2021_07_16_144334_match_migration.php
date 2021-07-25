@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProfileFieldsTable extends Migration
+class MatchMigration extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateProfileFieldsTable extends Migration
      */
     public function up()
     {
-        Schema::create('profile_fields', function (Blueprint $table) {
+        Schema::create('match_models', function (Blueprint $table) {
             $table->id();
-            $table->string('profile_id');
-            $table->string('field_type_id');
-            $table->longText('value');
+            $table->string('initiator_id');
+            $table->string('target_id');
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ class CreateProfileFieldsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('profile_fields');
+        Schema::dropIfExists('match_models');
     }
 }

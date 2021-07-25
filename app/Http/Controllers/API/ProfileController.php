@@ -53,6 +53,53 @@ class ProfileController extends Controller
         return response(['status' => 'ok', 'response' => $res], 200);
     }
 
+    public function get_profile(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'profile_id' => 'required|exists:profile_fields,profile_id'
+        ]);
+
+        if($validator->fails()){
+            return response(['error' => $validator->errors()]);
+        }
+
+        $profile_id = $data['profile_id'];
+        $profile = Profile::where('id', $profile_id)->get();
+        $fields = ProfileFields::where('profile_id', $profile_id)->get();
+
+        return response(['status' => 'ok', 'response' => ['profile_id' => $profile_id, 'fields' => $fields]]);
+    }
+
+    public function get_recomendations(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'profile_id' => 'required|exists:profile_fields,profile_id'
+        ]);
+
+        
+        if($validator->fails()){
+            return response(['error' => $validator->errors()]);
+        }
+
+        $profile_id = $data['profile_id'];
+        $age_pref = explode(':', ProfileFields::where('profile_id', $profile_id)->where('field_type_id', '5')->get()->first()->value);
+        // return response(['status' => 'ok', 'response' => ['profile_id' => $profile_id, 'profiles' => $age_pref]]);
+        
+        $sex_pref = explode(',', ProfileFields::where('profile_id', $profile_id)->where('field_type_id', '6')->get()->first()->value);
+        //return response(['status' => 'ok', 'response' => ['profile_id' => $profile_id, 'profiles' => $sex_pref]]);
+        //orWhere('value', $sex_pref)->
+
+        $recs_age = ProfileFields::
+            where('field_type_id', '1')->
+            whereBetween('value', $age_pref)->
+            where('profile_id', '<>', $profile_id)->
+            get();
+
+        return response(['status' => 'ok', 'response' => ['profile_id' => $profile_id, 'profiles' => $recs_age]]);
+    }
+
     /**
      * Display a listing of the resource.
      *

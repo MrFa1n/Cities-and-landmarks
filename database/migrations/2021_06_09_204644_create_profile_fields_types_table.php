@@ -16,7 +16,7 @@ class CreateProfileFieldsTypesTable extends Migration
         Schema::create('profile_fields_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('default');
+            $table->longText('default');
             $table->timestamps();
         });
     }

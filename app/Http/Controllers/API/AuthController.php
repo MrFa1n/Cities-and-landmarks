@@ -61,4 +61,21 @@ class AuthController extends Controller
         return response(['status'=>'ok', 'response'=>['user' => auth()->user(), 'access_token' => $accessToken]], 200);
 
     }
+
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'name' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ]);
+    }
+
+    protected function create(array $data)
+    {
+        return User::create([
+            'name' => $data['name'],
+            'password' => Hash::make($data['password']),
+        ]);
+    }
+
 }
