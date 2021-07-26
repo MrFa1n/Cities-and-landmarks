@@ -30,4 +30,6 @@ Route::get('/get_match', 'Api\MatchController@get_match');
 Route::get('/get_gift', 'Api\GiftController@get_gift');
 Route::get('/get_profile', 'Api\ProfileController@get_profile');
 Route::get('/get_rec', 'Api\ProfileController@get_recomendations');
+Route::get('/profile_gifts', 'Api\GiftController@profile_gifts');
+Route::get('/get_tier_gifts', 'Api\GiftController@get_tier');
 

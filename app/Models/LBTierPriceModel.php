@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class GiftModel extends Model
+class LBTierPriceModel extends Model
 {
     protected $fillable = [
-        'name','desc','icon','tier','extra'
+        'tier','price'
     ];
 }
