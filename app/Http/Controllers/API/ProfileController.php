@@ -170,4 +170,40 @@ class ProfileController extends Controller
 
         return response(['message' => 'Deleted']);
     }
+
+    public function upload_photo(Request $request){
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'photo' => 'required',
+            'id' => 'required|exists:profiles,id'
+        ]);
+        if($validator->fails()){
+            return response(['status' => 'error', 'error' => $validator->errors()]);
+        }
+
+
+        /*
+        foreach($fields_types as $field_type) {
+            if (!array_key_exists($field_type['name'], $data) && !$field_type['default']) {
+                return response(['status' => 'error', 'error' => [$field_type['name'] => 'Field has no default value']]);
+            }
+            if (!array_key_exists($field_type['name'], $data) && $field_type['default']) {
+                $data[$field_type['name']] = $field_type['default'];
+            }
+            $res[$field_type['id']] = $data[$field_type['name']];
+        }
+
+        foreach($res as $key => $value) {
+            $field = ProfileFields::create([
+                'profile_id' => $profile_id,
+                'field_type_id' => $key,
+                'value' => $value
+            ]);
+        }*/
+        
+        $add_photo = ProfileFields::create($data);
+        //return response([ 'profile' => new ProfileResource($add_photo), 'message' => 'Created successfully'], 200);
+        return response(['status' => 'ok', 'response' => $add_photo], 200);
+    }
+
 }

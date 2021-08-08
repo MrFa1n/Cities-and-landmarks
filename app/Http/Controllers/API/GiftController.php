@@ -96,4 +96,20 @@ class GiftController extends Controller
         $all_my_gifts = GiftModel::where('tier', $my_id)->get(); 
         return response(['status' => 'ok', 'response' => ['gifts' => $all_my_gifts]]);
     }
+
+    public function lutebox(Request $request){
+        //
+        $drop_probability = array(1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3);
+        $rand_tier = array_rand($drop_probability, 2);
+        $you_got = $drop_probability[$rand_tier[1]];
+        $all_my_gifts = GiftModel::where('tier', $you_got)->get();
+        $encode_arr =  json_decode($all_my_gifts,true);
+        $count_bitch = count($encode_arr);
+        $rand_price = rand(0, $count_bitch);
+        $your_surprise = $encode_arr[$rand_price];
+        //$tier_json = $encode_arr['5'];
+        //$rand_gifts_in_tier = array_rand($all_my_gifts, 2);
+        //$you_final_surprise = $drop_probability[$rand_gifts_in_tier[1]];
+        return response(['status' => 'ok', 'response' => ['you got gift:' => $your_surprise], 'all_gifts' => [$all_my_gifts] ]);
+    }
 }

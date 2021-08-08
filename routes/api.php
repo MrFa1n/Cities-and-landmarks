@@ -23,6 +23,7 @@ Route::post('/register', 'Api\AuthController@register');
 Route::post('/register_profile', 'Api\ProfileController@register_profile');
 Route::post('/login', 'Api\AuthController@login');
 Route::post('/match', 'Api\MatchController@match_found');
+Route::post('/photo_up', 'Api\ProfileController@upload_photo');
 Route::post('/gift', 'Api\GiftController@give_a_gift');
 
 //GET(GAY)
@@ -32,4 +33,5 @@ Route::get('/get_profile', 'Api\ProfileController@get_profile');
 Route::get('/get_rec', 'Api\ProfileController@get_recomendations');
 Route::get('/profile_gifts', 'Api\GiftController@profile_gifts');
 Route::get('/get_tier_gifts', 'Api\GiftController@get_tier');
+Route::get('/lute_box', 'Api\GiftController@lutebox');
 

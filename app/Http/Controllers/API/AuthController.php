@@ -9,6 +9,7 @@ use App\Models\ProfileFields;
 use App\Models\ProfileFieldsTypes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
