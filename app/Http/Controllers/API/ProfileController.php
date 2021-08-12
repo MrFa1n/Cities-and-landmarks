@@ -9,6 +9,8 @@ use App\Models\ProfileFieldsTypes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ProfileResource;
+use App\Models\HashTagsProfilModel;
+use App\Models\UploadPhotoModel;
 
 class ProfileController extends Controller
 {
@@ -90,6 +92,8 @@ class ProfileController extends Controller
         $sex_pref = explode(',', ProfileFields::where('profile_id', $profile_id)->where('field_type_id', '6')->get()->first()->value);
         //return response(['status' => 'ok', 'response' => ['profile_id' => $profile_id, 'profiles' => $sex_pref]]);
         //orWhere('value', $sex_pref)->
+
+        $hashtag = 1;
 
         $recs_age = ProfileFields::
             where('field_type_id', '1')->
@@ -173,37 +177,50 @@ class ProfileController extends Controller
 
     public function upload_photo(Request $request){
         $data = $request->all();
+
         $validator = Validator::make($data, [
             'photo' => 'required',
-            'id' => 'required|exists:profiles,id'
+            'profile_id' => 'required|exists:profiles,id'
         ]);
+
         if($validator->fails()){
             return response(['status' => 'error', 'error' => $validator->errors()]);
         }
 
-
-        /*
-        foreach($fields_types as $field_type) {
-            if (!array_key_exists($field_type['name'], $data) && !$field_type['default']) {
-                return response(['status' => 'error', 'error' => [$field_type['name'] => 'Field has no default value']]);
-            }
-            if (!array_key_exists($field_type['name'], $data) && $field_type['default']) {
-                $data[$field_type['name']] = $field_type['default'];
-            }
-            $res[$field_type['id']] = $data[$field_type['name']];
-        }
-
-        foreach($res as $key => $value) {
-            $field = ProfileFields::create([
-                'profile_id' => $profile_id,
-                'field_type_id' => $key,
-                'value' => $value
-            ]);
-        }*/
-        
-        $add_photo = ProfileFields::create($data);
-        //return response([ 'profile' => new ProfileResource($add_photo), 'message' => 'Created successfully'], 200);
+        $add_photo = UploadPhotoModel::create($data);
         return response(['status' => 'ok', 'response' => $add_photo], 200);
     }
 
+
+    public function get_photo(Request $request){
+        $data = $request->all();
+
+        $validator = Validator::make($data, [
+            'profile_id' => 'required|exists:profiles,id'
+        ]);
+
+        if($validator->fails()){
+            return response(['status' => 'error', 'error' => $validator->errors()]);
+        }
+
+        $profile_id = $data['profile_id'];
+        $add_photo = UploadPhotoModel::where('profile_id', $profile_id)->get();
+        return response(['status' => 'ok', 'response' => $add_photo], 200);
+    }
+
+    public function add_hashtag(Request $request){
+        $data = $request->all();
+
+        $validator = Validator::make($data, [
+            'hashtag' => 'required',
+            'profile_id' => 'required|exists:profiles,id'
+        ]);
+
+        if($validator->fails()){
+            return response(['status' => 'error', 'error' => $validator->errors()]);
+        }
+
+        $add_tag = HashTagsProfilModel::create($data);
+        return response(['status' => 'ok', 'response' => $add_tag], 200);
+    }
 }

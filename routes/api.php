@@ -24,7 +24,9 @@ Route::post('/register_profile', 'Api\ProfileController@register_profile');
 Route::post('/login', 'Api\AuthController@login');
 Route::post('/match', 'Api\MatchController@match_found');
 Route::post('/photo_up', 'Api\ProfileController@upload_photo');
+Route::post('/tag_add', 'Api\ProfileController@add_hashtag');
 Route::post('/gift', 'Api\GiftController@give_a_gift');
+Route::post('/edit_profile', 'Api\ProfileController@update');
 
 //GET(GAY)
 Route::get('/get_match', 'Api\MatchController@get_match');
@@ -34,4 +36,5 @@ Route::get('/get_rec', 'Api\ProfileController@get_recomendations');
 Route::get('/profile_gifts', 'Api\GiftController@profile_gifts');
 Route::get('/get_tier_gifts', 'Api\GiftController@get_tier');
 Route::get('/lute_box', 'Api\GiftController@lutebox');
+Route::get('/get_all_photo_profile', 'Api\ProfileController@get_photo');
 
