@@ -138,10 +138,10 @@ class ProfileController extends Controller
     ->get(['profile_id']);*/
     //toSql()
         //$all_recs = $recs_age->merge($recs_sex);
-        $sex_pref1 = $sex_pref[0];
+        //$sex_pref1 = $sex_pref[0];
         //return $sex_pref1;
-        $age_pref[0] = $age_pref[0];
-        $age_pref[1] = $age_pref[1];
+        //$age_pref[0] = $age_pref[0];
+        //$age_pref[1] = $age_pref[1];
         $results = DB::select( DB::raw("SELECT distinct p.* FROM 
             profiles p 
             JOIN profile_fields pf_age ON pf_age.`profile_id` = p.`id` and pf_age.`field_type_id` = 1 and pf_age.`value` BETWEEN :age_from AND :age_to
@@ -149,7 +149,7 @@ class ProfileController extends Controller
             WHERE p.`id` != $profile_id and  (pf_age.`id` IS NOT NULL and pf_sex.`id` IS NOT NULL)"), array(
             'age_from' => $age_pref[0],
             'age_to' => $age_pref[1],
-            'sex' => $sex_pref1,
+            'sex' => $sex_pref[0],
         ));
 
         return response(['status' => 'ok', 'response' => ['profile_id' => $profile_id, 'profiles' => $results]]);
