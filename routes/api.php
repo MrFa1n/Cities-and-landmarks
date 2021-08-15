@@ -26,7 +26,7 @@ Route::post('/match', 'API\MatchController@match_found');
 Route::post('/photo_up', 'API\ProfileController@upload_photo');
 Route::post('/tag_add', 'API\ProfileController@add_hashtag');
 Route::post('/gift', 'API\GiftController@give_a_gift');
-Route::post('/edit_profile', 'API\ProfileController@update');
+Route::put('/edit_profile', 'API\ProfileController@update');
 
 //GET(GAY)
 Route::get('/get_match', 'API\MatchController@get_match');

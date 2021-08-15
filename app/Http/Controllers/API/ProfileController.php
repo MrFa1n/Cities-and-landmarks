@@ -206,13 +206,81 @@ class ProfileController extends Controller
      * @param  \App\Models\Profile  $profile
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Profile $profile)
+    public function update(Request $request)
     {
+        //$profile->update($request->all());
+        /*
+        $profile=ProfileFields::find($id);
         $profile->update($request->all());
+        return $profile;
+        */
+        
+        $data = $request->all();
+        /*
+        $fields_types = ProfileFieldsTypes::all();
+        $res = array();
 
-        return response([ 'profile' => new ProfileResource($profile), 'message' => 'Retrieved successfully'], 200);
+        $validator = Validator::make($data, [
+            'profile_id' => 'required|exists:profiles,id'
+        ]);/*
+        /*
+        if($validator->fails()){
+            return response(['error' => $validator->errors()]);
+        }
+
+        $profile_id = $data['profile_id'];
+        $check_registered = ProfileFields::where('profile_id', $profile_id)->get();
+        if (count($check_registered) == 0) {
+            return response(['status'=>'error', 'error' => ['profile_id' => 'Profile not registered']]);
+        }
+
+        foreach($fields_types as $field_type) {
+            if (!array_key_exists($field_type['name'], $data) && !$field_type['default']) {
+                return response(['status' => 'error', 'error' => [$field_type['name'] => 'Field has no default value']]);
+            }
+            if (!array_key_exists($field_type['name'], $data) && $field_type['default']) {
+                $data[$field_type['name']] = $field_type['default'];
+            }
+            $res[$field_type['id']] = $data[$field_type['name']];
+        }
+
+        foreach($res as $key => $value) {
+            $field = ProfileFields::updateOrCreate([
+                'profile_id' => $profile_id,
+                'field_type_id' => $key,
+                'value' => $value
+            ]);
+        }*/
+        $description = $data['description'];
+        $id_profile = $data['id_profile'];
+        $age_pref = $data['age_pref'];
+        $sex_pref = $data['sex_pref'];
+        $results = DB::select( DB::raw("UPDATE profile_fields SET value =". "'".$description."'" ."
+        WHERE profile_id = $id_profile 
+        AND field_type_id = (SELECT id FROM profile_fields_types WHERE name = 'description')"));
+
+        $results = DB::select( DB::raw("UPDATE profile_fields SET value =". "'".$age_pref."'" ."
+        WHERE profile_id = $id_profile 
+        AND field_type_id = (SELECT id FROM profile_fields_types WHERE name = 'age_pref')"));
+        
+        $results = DB::select( DB::raw("UPDATE profile_fields SET value =". "'".$sex_pref."'" ."
+        WHERE profile_id = $id_profile 
+        AND field_type_id = (SELECT id FROM profile_fields_types WHERE name = 'sex_pref')"));
+
+        return response(['status' => 'ok', 'response' => ['profiles' => $results]]);
+
+        //return response(['status' => 'ok', 'response' => $res], 200);
+        //return response([ 'profile' => new ProfileResource($profile), 'message' => 'Retrieved successfully'], 200);
     }
+/*
+    public function update_book(Request $request,$id)
+    {
+        $product=BooksModel::find($id);
+        $product->update($request->all());
+        return $product;
 
+    }
+*/
     /**
      * Remove the specified resource from storage.
      *
