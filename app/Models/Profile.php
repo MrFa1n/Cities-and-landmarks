@@ -11,4 +11,6 @@ class Profile extends Model
     protected $fillable = [
         'user_id'
     ];
+    // Скрывает поля
+    protected $hidden = ['created_at', 'updated_at'];
 }
