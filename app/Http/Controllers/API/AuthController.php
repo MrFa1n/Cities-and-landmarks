@@ -57,9 +57,24 @@ class AuthController extends Controller
             return response(['status'=>'error', 'error'=>['message' => 'Invalid Credentials']]);
         }
 
-        $accessToken = auth()->user()->createToken('authToken')->accessToken;
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
+            if (Hash::check($request->password, $user->password)) {
+                $token = $user->createToken('Laravel Password Grant Client')->accessToken;
+                $response = ['token' => $token];
+                return response($response, 200);
+            } else {
+                $response = ["message" => "Password or login mismatch"];
+                return response($response, 422);
+            }
+        } else {
+            $response = ["message" =>'User does not exist'];
+            return response($response, 422);
+        }
+        
+        #$accessToken = auth()->user()->createToken('authToken')->accessToken;
 
-        return response(['status'=>'ok', 'response'=>['user' => auth()->user(), 'access_token' => $accessToken]], 200);
+        #return response(['status'=>'ok', 'response'=>['user' => auth()->user(), 'access_token' => $accessToken]], 200);
 
     }
 
