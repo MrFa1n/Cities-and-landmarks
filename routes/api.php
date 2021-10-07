@@ -37,4 +37,4 @@ Route::get('/profile_gifts', 'API\GiftController@profile_gifts');
 Route::get('/get_tier_gifts', 'API\GiftController@get_tier');
 Route::get('/lute_box', 'API\GiftController@lutebox');
 Route::get('/get_all_photo_profile', 'API\ProfileController@get_photo');
-
+Route::get('/hello_world', 'API\ProfileController@get_hello');

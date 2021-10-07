@@ -11,4 +11,6 @@ class ProfileFields extends Model
     protected $fillable = [
         'profile_id', 'field_type_id', 'value'
     ];
+    // Скрывает поля
+    protected $hidden = ['created_at', 'updated_at'];
 }

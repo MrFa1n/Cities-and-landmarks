@@ -17,33 +17,45 @@ class ProfileController extends Controller
 {
     public function register_profile(Request $request)
     {
+        // Запрос с фронта
         $data = $request->all();
         $fields_types = ProfileFieldsTypes::all();
         $res = array();
 
+        // Проверка существует ли данный профиль
         $validator = Validator::make($data, [
             'profile_id' => 'required|exists:profiles,id'
         ]);
 
         if($validator->fails()){
-            return response(['error' => $validator->errors()]);
+            return response(['status' => 'ok', 'error' => $validator->errors()]);
         }
 
+        // Проверка заполнены ли поля данного профиля
         $profile_id = $data['profile_id'];
         $check_registered = ProfileFields::where('profile_id', $profile_id)->get();
         if (count($check_registered) != 0) {
-            return response(['status'=>'error', 'error' => ['profile_id' => 'Profile already registered']]);
+            return response(['status'=>'error', 'error' => ['profile_id' => 'The profile is already filled in']]);
         }
 
+        // Пробегаемся по каждому полю
         foreach($fields_types as $field_type) {
+            // Проверка на корректные данные
+            // Есть ли у данного поля дефолное значение
+            // Если его нет, то кидаем ошибку
             if (!array_key_exists($field_type['name'], $data) && !$field_type['default']) {
                 return response(['status' => 'error', 'error' => [$field_type['name'] => 'Field has no default value']]);
             }
+            // Если у поля есть дефолтное значение и поле пустое,
+            // то записываем в поле это дефолтное значение
             if (!array_key_exists($field_type['name'], $data) && $field_type['default']) {
                 $data[$field_type['name']] = $field_type['default'];
             }
+            
             $res[$field_type['id']] = $data[$field_type['name']];
         }
+
+        $response = array();
 
         foreach($res as $key => $value) {
             $field = ProfileFields::create([
@@ -51,27 +63,44 @@ class ProfileController extends Controller
                 'field_type_id' => $key,
                 'value' => $value
             ]);
+            $response[] = $field->value;
         }
 
-        return response(['status' => 'ok', 'response' => $res], 200);
+        return response(['status' => 'ok', 'response' => $response], 200);
     }
 
-    public function get_profile(Request $request)
-    {
+    // Получение информации профиля
+    public function get_profile(Request $request){
+
         $data = $request->all();
+        // Проверка на наличие значения в БД
         $validator = Validator::make($data, [
+            // Required - не пустое ли поле
+            // exists - существет ли запись в таблице БД 
+            // после ":" название таблицы, название столбца
             'profile_id' => 'required|exists:profile_fields,profile_id'
         ]);
-
         if($validator->fails()){
-            return response(['error' => $validator->errors()]);
+            return response(['status' => 'error', 'error' => $validator->errors()]);
         }
 
+        // Получаем все поля из таблицы profile_fields
         $profile_id = $data['profile_id'];
-        $profile = Profile::where('id', $profile_id)->get();
         $fields = ProfileFields::where('profile_id', $profile_id)->get();
 
-        return response(['status' => 'ok', 'response' => ['profile_id' => $profile_id, 'fields' => $fields]]);
+        // Заносим значения по умолчанию
+        $response = [];
+        // $response['status'] = 'ok';
+        $response['profile_id'] = $profile_id;
+
+        // Пробегаемся по каждому полю и берем оттуда значение,
+        // Помимо этого берем индекс поля и приятгиваем по этому индексу из
+        // Таблицы profile_fields_types название поля и ставим его в виде ключа.
+        foreach ($fields as $array) {
+            $field_id = ProfileFieldsTypes::where('id', $array->field_type_id)->value('name');
+            $response[$field_id] = $array->value;
+        }
+        return response(['status' => 'ok', 'response' => $response]);
     }
 
     public function get_recomendations(Request $request)
