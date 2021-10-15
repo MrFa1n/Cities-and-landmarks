@@ -4,6 +4,7 @@ RUN apt-get update \
 && docker-php-ext-install pdo pdo_mysql \
 && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=1.10.16 \
 && apt-get install -y --no-install-recommends --fix-missing\
+    libpq-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
@@ -15,7 +16,8 @@ RUN apt-get update \
     --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ \
     --with-xpm-dir=/usr/lib/x86_64-linux-gnu/ \
     --with-webp-dir=/usr/lib/x86_64-linux-gnu/ \
-&& docker-php-ext-install gd \ 
+&& docker-php-ext-install gd \
+&& docker-php-ext-install pdo pdo_pgsql pgsql \
 && docker-php-ext-install exif
 
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
