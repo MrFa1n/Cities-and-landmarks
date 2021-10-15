@@ -10,6 +10,7 @@ use App\Models\ProfileFieldsTypes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -43,6 +44,8 @@ class AuthController extends Controller
 
         $accessToken = $user->createToken('authToken')->accessToken;
 
+        event(new Registered($user));
+        
         return response(['status'=>'ok', 'response'=>[ 'user' => $user, 'profile_id' => $profile->id, 'access_token' => $accessToken, 'fields' => $fields]], 200);
     }
 
