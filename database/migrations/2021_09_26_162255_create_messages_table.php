@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDonatedGiftModelsTable extends Migration
+class CreateMessagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateDonatedGiftModelsTable extends Migration
      */
     public function up()
     {
-        Schema::create('donated_gift_models', function (Blueprint $table) {
-            $table->id();
-            $table->string('id_gift');
-            $table->string('init');
-            $table->string('target');
-            $table->string('desc');
-            $table->json('extra');
+        Schema::create('messages', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->integer('user_id')->unsigned();
+            $table->text('message');
+            $table->integer('visited');
+            $table->string('admin');
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ class CreateDonatedGiftModelsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('donated_gift_models');
+        Schema::dropIfExists('messages');
     }
 }

@@ -13,7 +13,7 @@ class GiftMigration extends Migration
      */
     public function up()
     {
-        Schema::create('gift_models', function (Blueprint $table) {
+        Schema::create('donated_gift_models', function (Blueprint $table) {
             $table->id();
             $table->string('initiator_id');
             $table->string('target_id');

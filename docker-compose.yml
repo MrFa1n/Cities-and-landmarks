@@ -1,0 +1,69 @@
+version: "3.3"
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/Nginx.Dockerfile
+    image: nginx
+    ports:
+      - 8098:80
+      - 443:443
+    links:
+      - fpm
+    volumes:
+      - ./:/var/www/vikiroom
+      - ./data/conf/vhost.conf:/var/www/vikiroom/docker/conf/
+    networks:
+      - app-network
+
+  fpm:
+    build:
+      context: .
+      dockerfile: docker/Fpm.Dockerfile
+    volumes:
+      - ./:/var/www/vikiroom
+    links:
+      - postgres
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:13.1
+    build:
+      context: .
+      dockerfile: docker/Postgres.Dockerfile
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - APP_DB_USER=root
+      - APP_DB_PASS=root
+      - APP_DB_NAME=laravel_back
+    volumes:
+      - ./:/var/www/docker-entrypoint-initdb.d/
+    ports:
+      - 5432:5432
+    container_name: postgres
+    networks:
+      - app-network
+  # mysql:
+  #   image: mysql:5.7
+  #   ports:
+  #     - 3306:3306
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=root
+  #     - MYSQL_DATABASE=laravel_back
+  #     - DB_PATH_HOST= /tmp/mysql
+  #   container_name: mysql
+  #   networks:
+  #     - app-network
+
+networks:
+  app-network:
+    driver: bridge
