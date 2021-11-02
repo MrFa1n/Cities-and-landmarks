@@ -40,8 +40,8 @@ class GiftController extends Controller
         $desc = $data['desc'];
         $target = $data['target'];
         $id_gift = $data['id_gift'];
-        // Проверяем передавали ли поле экстра в запросеЙФ
 
+        // Проверяем передавали ли поле экстра в запросе
         if (array_key_exists('extra', $data)) {
             $extra = $data['extra'];
         }
@@ -90,7 +90,7 @@ class GiftController extends Controller
     public function profile_gifts(Request $request) {   
         $data = $request->all();
         $validator = Validator::make($data, [
-            'profile_id' => 'exists:profiles,id'
+            'profile_id' => 'exists:profiles,user_id'
         ]);
 
         if($validator->fails()){
@@ -134,8 +134,9 @@ class GiftController extends Controller
                         'name' => $value['name'],
                         'gift_id' => $value['id'],
                         'tier' => $value['tier'],
-                        'icon' => $value['icon'],
-                        'count' => $gifts_count[$value['id']]
+                        'count' => $gifts_count[$value['id']],
+                        'desc' => $value['desc'],
+                        'icon' => $value['icon']
                     ];
                     // Заносим в массив пройденных подарков наш подарок
                     $checked_gifts[] = $value['name'];

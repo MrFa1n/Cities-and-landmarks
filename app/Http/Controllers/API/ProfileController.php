@@ -24,7 +24,7 @@ class ProfileController extends Controller
 
         // Проверка существует ли данный профиль
         $validator = Validator::make($data, [
-            'profile_id' => 'required|exists:profiles,id'
+            'profile_id' => 'required|exists:profiles,user_id'
         ]);
 
         if($validator->fails()){
@@ -164,7 +164,8 @@ class ProfileController extends Controller
             where('profile_id', '<>', $profile_id);
     })
     ->distinct()
-    ->get(['profile_id']);*/
+    ->get(['profile_id']);
+*/
     //toSql()
         //$all_recs = $recs_age->merge($recs_sex);
         //$sex_pref1 = $sex_pref[0];
@@ -173,9 +174,9 @@ class ProfileController extends Controller
         //$age_pref[1] = $age_pref[1];
         $results = DB::select( DB::raw("SELECT distinct p.* FROM 
             profiles p 
-            JOIN profile_fields pf_age ON pf_age.`profile_id` = p.`id` and pf_age.`field_type_id` = 1 and pf_age.`value` BETWEEN :age_from AND :age_to
-            JOIN profile_fields pf_sex ON pf_sex.`profile_id` = p.`id` and pf_sex.`field_type_id` = 3 and pf_sex.`value` = :sex
-            WHERE p.`id` != $profile_id and  (pf_age.`id` IS NOT NULL and pf_sex.`id` IS NOT NULL)"), array(
+            JOIN profile_fields pf_age ON cast(pf_age.profile_id as int) = cast(p.id as int) and cast(pf_age.field_type_id as int) = 1 and pf_age.value BETWEEN :age_from AND :age_to
+            JOIN profile_fields pf_sex ON cast(pf_sex.profile_id as int) = cast(p.id as int) and cast(pf_sex.field_type_id as int) = 3 and pf_sex.value = :sex
+            WHERE cast(p.id as int) != $profile_id and  (pf_age.id IS NOT NULL and pf_sex.id IS NOT NULL)"), array(
             'age_from' => $age_pref[0],
             'age_to' => $age_pref[1],
             'sex' => $sex_pref[0],

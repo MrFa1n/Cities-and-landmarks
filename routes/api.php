@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\API\RedirectResponse;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,9 +19,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::apiResource('/user', 'API\AuthController')->middleware('auth:api');
+// Social
+Route::get('/{provider}/auth', 'Auth\SocialController@redirectToProvider')->name('vk.auth')->middleware('web');
+Route::get('/{provider}/auth/callback', 'Auth\SocialController@callback')->middleware('web');
 
-//POST
+/*
+    POST запросы
+*/
 Route::post('/register', 'API\AuthController@register');
 Route::post('/register_profile', 'API\ProfileController@register_profile');
 Route::post('/login', 'API\AuthController@login')->middleware('auth:api');
@@ -29,11 +34,15 @@ Route::post('/photo_up', 'API\ProfileController@upload_photo');
 Route::post('/tag_add', 'API\ProfileController@add_hashtag');
 Route::post('/gift', 'API\GiftController@give_a_gift');
 Route::put('/edit_profile', 'API\ProfileController@update');
-Route::post('/chat/all','API\Chat@allUserMessageSent');
-Route::post('/chat/messages','API\Chat@sendMessage');
+// Запрос для верификации мыла - отправка сообщения на мыло пользователя
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return ['status' => 'verification-link-sent'];
+})->middleware(['auth:api', 'throttle:6,1']);
 
-
-//GET(GAY)
+/*
+    GET запросы
+*/
 Route::get('/get_match', 'API\MatchController@get_match');
 Route::get('/get_gift', 'API\GiftController@get_gift');
 Route::get('/get_profile', 'API\ProfileController@get_profile');
@@ -43,4 +52,5 @@ Route::get('/get_tier_gifts', 'API\GiftController@get_tier');
 Route::get('/lute_box', 'API\GiftController@lutebox');
 Route::get('/get_all_photo_profile', 'API\ProfileController@get_photo');
 Route::get('/hello_world', 'API\ProfileController@get_hello');
-Route::get('/chat/messages/{user}', 'API\Chat@fetchMessages');
+// Запрос для верификации мыла - подтвержение мыла, нажатие на кнопку верификации пользователем
+Route::get('/email/verify/{id}/{hash}', 'API\EmailVerificationController@verify')->middleware('api');
