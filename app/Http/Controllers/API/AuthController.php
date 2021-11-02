@@ -45,7 +45,6 @@ class AuthController extends Controller
         $accessToken = $user->createToken('authToken')->accessToken;
 
         event(new Registered($user));
-        
         return response(['status'=>'ok', 'response'=>[ 'user' => $user, 'profile_id' => $profile->id, 'access_token' => $accessToken, 'fields' => $fields]], 200);
     }
 
@@ -96,5 +95,4 @@ class AuthController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
-
 }
