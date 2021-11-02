@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
 
@@ -80,6 +81,8 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 # The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
+=======
+>>>>>>> e7c81b2940d81184a71899b044292a9d76d51fb0
 ## VIKIROOM
 
 Like it if you like the backend
