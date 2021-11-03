@@ -30,7 +30,7 @@ class GiftController extends Controller
             'target_id' => 'exists:profiles,id',
             'id_gift' => 'exists:profile_gifts,gift_id'
         ]);
-
+        
         if($validator->fails()){
             return response(['status' => 'error', 'error' => $validator->errors()]);
         }
@@ -40,18 +40,18 @@ class GiftController extends Controller
         $desc = $data['desc'];
         $target = $data['target'];
         $id_gift = $data['id_gift'];
-
+        
         // Проверяем передавали ли поле экстра в запросе
         if (array_key_exists('extra', $data)) {
             $extra = $data['extra'];
         }
         else {
-            $extra = '';
+            $extra = '{}';
         }
 
         // Отправляем запрос в БД, чтобюы найти ту строку
         // Идет проверка на наличие поля Экстра (описание подарка)
-        if ($extra == '') {
+        if ($extra == '{}') {
             $gift_type_tmp = ProfileGifts::where([
             ['profile_id','=', $initiator_id],
             ['gift_id','=', $id_gift],
@@ -73,16 +73,17 @@ class GiftController extends Controller
         $gift_type = $gift_type_tmp[0];
         // Записыываем в переменную айди подарка
         $gift_type_id = $gift_type->value('gift_id');
-
+        
         // Удаляем у полязователя подаренный подарок
         $gift_type_tmp[0]->delete();
+        
         // И добавляем пользователю новый подарок
         $field = ProfileGifts::create([
             'gift_id' => $id_gift,
             'profile_id' => $target,
             'extra' => $extra
         ]);
-
+        
         return response(['status' => 'ok', 'response' => $field], 200);
     }
 
