@@ -13,6 +13,7 @@ services:
       - fpm
     volumes:
       - ./:/var/www/vikiroom
+      - ./data/nginx/certs:/etc/nginx/certs
       - ./data/conf/vhost.conf:/var/www/vikiroom/docker/conf/
     networks:
       - app-network
