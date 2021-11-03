@@ -20,7 +20,8 @@ class GiftController extends Controller
         $mathes = GiftModel::all();
         return response(['status' => 'ok', 'response' => ['mathes' => $mathes]]);
     }
-    // Подарить подарок
+    // test
+    // Give a gift
     public function give_a_gift(Request $request){
         // Выбираем все данные из запроса
         // Проверяем, есть ли в БД: отправитель, получатель и сам подарок
