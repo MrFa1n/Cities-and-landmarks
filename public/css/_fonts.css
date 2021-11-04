@@ -1,0 +1,16 @@
+/**
+ * Fonts
+ */
+
+/* Fonts: Proxima Nova */
+@font-face {
+    font-family: 'Proxima Nova';
+    src: url('../assets/fonts/Proxima Nova/ProximaNova-Thin.eot');
+    src: url('../assets/fonts/Proxima Nova/ProximaNova-Thin.eot?#iefix') format('embedded-opentype'),
+        url('../assets/fonts/Proxima Nova/ProximaNova-Thin.woff2') format('woff2'),
+        url('../assets/fonts/Proxima Nova/ProximaNova-Thin.woff') format('woff'),
+        url('../assets/fonts/Proxima Nova/ProximaNova-Thin.ttf') format('truetype'),
+        url('../assets/fonts/Proxima Nova/ProximaNova-Thin.otf') format('opentype');
+    font-weight: 100;
+    font-style: normal;
+}
