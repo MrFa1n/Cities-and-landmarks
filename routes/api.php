@@ -28,7 +28,7 @@ Route::get('/{provider}/auth/callback', 'Auth\SocialController@callback')->middl
 */
 Route::post('/register', 'API\AuthController@register');
 Route::post('/register_profile', 'API\ProfileController@register_profile');
-Route::post('/login', 'API\AuthController@login')->middleware('auth:api');
+Route::post('/login', 'API\AuthController@login');
 Route::post('/match', 'API\MatchController@match_found');
 Route::post('/photo_up', 'API\ProfileController@upload_photo');
 Route::post('/tag_add', 'API\ProfileController@add_hashtag');

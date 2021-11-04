@@ -45,7 +45,7 @@ class AuthController extends Controller
         $accessToken = $user->createToken('authToken')->accessToken;
 
         event(new Registered($user));
-        return response(['status'=>'ok', 'response'=>[ 'user' => $user, 'profile_id' => $profile->id, 'access_token' => $accessToken, 'fields' => $fields]], 200);
+        return response(['status'=>'ok', 'response'=>[ 'user' => $user, 'profile_id' => $profile->id, 'access_token' => $accessToken]], 200);
     }
 
     public function login(Request $request)
@@ -58,25 +58,10 @@ class AuthController extends Controller
         if (!auth()->attempt($loginData)) {
             return response(['status'=>'error', 'error'=>['message' => 'Invalid Credentials']]);
         }
-
-        $user = User::where('email', $request->email)->first();
-        if ($user) {
-            if (Hash::check($request->password, $user->password)) {
-                $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-                $response = ['token' => $token];
-                return response($response, 200);
-            } else {
-                $response = ["message" => "Password or login mismatch"];
-                return response($response, 422);
-            }
-        } else {
-            $response = ["message" =>'User does not exist'];
-            return response($response, 422);
-        }
         
-        #$accessToken = auth()->user()->createToken('authToken')->accessToken;
+        $accessToken = auth()->user()->createToken('authToken')->accessToken;
 
-        #return response(['status'=>'ok', 'response'=>['user' => auth()->user(), 'access_token' => $accessToken]], 200);
+        return response(['status'=>'ok', 'response'=>['user' => auth()->user(), 'access_token' => $accessToken]], 200);
 
     }
 
