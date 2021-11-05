@@ -343,7 +343,6 @@ class ProfileController extends Controller
         $validator = Validator::make($data, [
             'photo' => 'required',
             'profile_id' => 'required|exists:profiles,user_id',
-            'photo_id' => 'exists'
         ]);
 
         if($validator->fails()){
