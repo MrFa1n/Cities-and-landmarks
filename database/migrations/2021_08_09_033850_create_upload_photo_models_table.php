@@ -16,6 +16,7 @@ class CreateUploadPhotoModelsTable extends Migration
         Schema::create('upload_photo_models', function (Blueprint $table) {
             $table->id();
             $table->string('profile_id');
+            $table->string('photo_id');
             $table->longText('photo');
             $table->timestamps();
         });

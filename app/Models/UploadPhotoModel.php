@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class UploadPhotoModel extends Model
 {
     protected $fillable = [
-        'profile_id', 'photo'
+        'profile_id', 'photo', 'photo_id'
     ];
 }

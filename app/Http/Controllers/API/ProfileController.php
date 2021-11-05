@@ -57,6 +57,16 @@ class ProfileController extends Controller
 
         $response = array();
 
+        // Заносим в UploadPhotoModel для данного пользователя
+        // 5 строк с пустыми фотографиями по каждому photo_id 
+        for($i = 1; $i <= 5; $i++) {
+            $kek = UploadPhotoModel::create([
+                    'profile_id' => $profile_id,
+                    'photo_id' => (string)$i,
+                    'photo' => ''
+                ]); 
+        }
+
         foreach($res as $key => $value) {
             $field = ProfileFields::create([
                 'profile_id' => $profile_id,
@@ -286,16 +296,16 @@ class ProfileController extends Controller
         $age_pref = $data['age_pref'];
         $sex_pref = $data['sex_pref'];
         $results = DB::select( DB::raw("UPDATE profile_fields SET value =". "'".$description."'" ."
-        WHERE profile_id = $id_profile 
-        AND field_type_id = (SELECT id FROM profile_fields_types WHERE name = 'description')"));
+        WHERE cast(profile_id as int) = $id_profile 
+        AND cast(field_type_id as int) = (SELECT cast(id as int) FROM profile_fields_types WHERE name = 'description')"));
 
         $results = DB::select( DB::raw("UPDATE profile_fields SET value =". "'".$age_pref."'" ."
-        WHERE profile_id = $id_profile 
-        AND field_type_id = (SELECT id FROM profile_fields_types WHERE name = 'age_pref')"));
+        WHERE cast(profile_id as int) = $id_profile 
+        AND cast(field_type_id as int) = (SELECT cast(id as int) FROM profile_fields_types WHERE name = 'age_pref')"));
         
         $results = DB::select( DB::raw("UPDATE profile_fields SET value =". "'".$sex_pref."'" ."
-        WHERE profile_id = $id_profile 
-        AND field_type_id = (SELECT id FROM profile_fields_types WHERE name = 'sex_pref')"));
+        WHERE cast(profile_id as int) = $id_profile 
+        AND cast(field_type_id as int) = (SELECT cast(id as int) FROM profile_fields_types WHERE name = 'sex_pref')"));
 
         return response(['status' => 'ok', 'response' => ['profiles' => $results]]);
 
@@ -324,20 +334,35 @@ class ProfileController extends Controller
         return response(['message' => 'Deleted']);
     }
 
+/*
+    Загрузка или обновление фотографий
+*/
     public function upload_photo(Request $request){
         $data = $request->all();
 
         $validator = Validator::make($data, [
             'photo' => 'required',
-            'profile_id' => 'required|exists:profiles,id'
+            'profile_id' => 'required|exists:profiles,user_id',
+            'photo_id' => 'exists'
         ]);
 
         if($validator->fails()){
             return response(['status' => 'error', 'error' => $validator->errors()]);
         }
 
-        $add_photo = UploadPhotoModel::create($data);
-        return response(['status' => 'ok', 'response' => $add_photo], 200);
+        $photo_id = $data['photo_id'];
+        $profile_id = $data['profile_id'];
+        $photo = $data['photo'];
+
+        // Обновление фоток в бд
+        // Выбираем строку в бд в нашим пользователем и id фотки,
+        // и просто обновляем поле с фото
+        $update_photo = UploadPhotoModel::where([
+                                        ['profile_id','=', $profile_id],
+                                        ['photo_id', '=', $photo_id],
+                                        ])->update(['photo' => $photo]);
+
+        return response(['status' => 'ok'], 200);
     }
 
 
