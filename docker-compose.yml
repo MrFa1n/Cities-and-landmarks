@@ -47,7 +47,7 @@ services:
       - APP_DB_PASS=root
       - APP_DB_NAME=laravel_back
     volumes:
-      - ./:/var/www/docker-entrypoint-initdb.d/
+      - postgres:/var/lib/postgresql/data
     ports:
       - 5432:5432
     container_name: postgres
@@ -68,3 +68,6 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  postgres:
