@@ -29,15 +29,15 @@ class SocialController extends Controller
         $user = $this->findOrCreateUser($provider, $socialiteUser);
 
         // After a successful search or adding a new user, the user logs in
-        auth()->login($user, true);
-        return[$user];
+        auth()->login($user[0], true);
+        return['user'=>$user[0], 'filled'=>$user[1]];
     }
     // The function of searching for a user in the database or creating a new one
     public function findOrCreateUser($provider, $socialiteUser)
     {
         // Search in the social_accounts table whether the user has logged in at all
         if ($user = $this->findUserBySocialId($provider, $socialiteUser->getId())) {
-            return $user;
+            return [$user, 'true'];
         }
 
         // Search in the social_accounts table by the user's email 
@@ -45,7 +45,7 @@ class SocialController extends Controller
         if ($user = $this->findUserByEmail($provider, $socialiteUser->getEmail())) {
             // If such a user is found, then we simply add a new social network to it
             $this->addSocialAccount($provider, $user, $socialiteUser);
-            return $user;
+            return [$user, 'true'];
         }
 
         // If the user is not found anywhere, add to the users table
@@ -54,10 +54,11 @@ class SocialController extends Controller
             'email' => $socialiteUser->getEmail(),
             'password' => bcrypt(Str::random(25)),
         ]);
+        $profile = Profile::create(['user_id' => $user->id]);
         // And also add the user to the social_accounts table
         $this->addSocialAccount($provider, $user, $socialiteUser);
 
-        return $user;
+        return [$user, 'false'];
     }
 
     // Search in the social_accounts table whether the user has logged in at all

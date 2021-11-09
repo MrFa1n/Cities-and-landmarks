@@ -108,7 +108,17 @@ class ProfileController extends Controller
         // Таблицы profile_fields_types название поля и ставим его в виде ключа.
         foreach ($fields as $array) {
             $field_id = ProfileFieldsTypes::where('id', $array->field_type_id)->value('name');
-            $response[$field_id] = $array->value;
+            // Если нам втречается поле с фото, то мы подгружаем первую фотку пользователя 
+            // из таблицы UploadPhotoModel
+            if($field_id == 'photo') {
+                $photo_value = UploadPhotoModel::where([
+                                        ['profile_id','=', $profile_id],
+                                        ['photo_id', '=', 1],
+                                        ]) -> value('photo');
+                $response[$field_id] = $photo_value; 
+            } else {
+               $response[$field_id] = $array->value; 
+            }
         }
         return response(['status' => 'ok', 'response' => $response]);
     }
