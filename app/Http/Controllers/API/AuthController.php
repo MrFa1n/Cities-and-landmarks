@@ -45,7 +45,7 @@ class AuthController extends Controller
         $accessToken = $user->createToken('authToken')->accessToken;
 
         event(new Registered($user));
-        return response(['status'=>'ok', 'response'=>[ 'user' => $user, 'profile_id' => $profile->id, 'access_token' => $accessToken]], 200);
+        return response(['status'=>'ok', 'response'=>[ 'user' => $user, 'profile_id' => $profile->user_id, 'access_token' => $accessToken]], 200);
     }
 
     public function login(Request $request)
