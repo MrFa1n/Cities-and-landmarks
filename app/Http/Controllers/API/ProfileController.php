@@ -70,12 +70,19 @@ class ProfileController extends Controller
         }
 
         foreach($res as $key => $value) {
-            $field = ProfileFields::create([
-                'profile_id' => $profile_id,
-                'field_type_id' => $key,
-                'value' => $value
-            ]);
-            $response[] = $field->value;
+            if($key == 4) {
+                $photo_value = UploadPhotoModel::where([
+                                        ['profile_id','=', $profile_id],
+                                        ['photo_id', '=', 1],
+                                        ]) -> update(['photo' => $value]);
+                 $response[] = $value;
+            } else {  
+                $field = ProfileFields::create(['profile_id' => $profile_id,
+                                                'field_type_id' => $key,
+                                                'value' => $value]);
+                $response[] = $field->value;
+            }
+           
         }
 
         return response(['status' => 'ok', 'response' => $response], 200);
