@@ -38,6 +38,8 @@ Route::post('/email/verification-notification', function (Request $request) {
     return ['status' => 'verification-link-sent'];
 })->middleware(['auth:api', 'throttle:6,1']);
 
+Route::post('/add_prem', 'API\PremiumController@add_premium');
+
 /*
     GET запросы
 */
@@ -52,6 +54,8 @@ Route::get('/get_all_photo_profile', 'API\ProfileController@get_photo');
 Route::get('/hello_world', 'API\ProfileController@get_hello');
 // Запрос для верификации мыла - подтвержение мыла, нажатие на кнопку верификации пользователем
 Route::get('/email/verify/{id}/{hash}', 'API\EmailVerificationController@verify')->middleware('api');
+
+Route::get('/get_prem', 'API\PremiumController@get_premium');
 
 /* 
     PUT запросы

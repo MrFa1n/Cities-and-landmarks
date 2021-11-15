@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\API\PremiumController;
 use App\Models\Profile;
 use App\Models\ProfileFields;
 use App\Models\ProfileFieldsTypes;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ProfileResource;
 use App\Models\HashTagsProfilModel;
 use App\Models\UploadPhotoModel;
+use App\Premium;
 use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
@@ -93,9 +95,11 @@ class ProfileController extends Controller
         if($validator->fails()){
             return response(['status' => 'error', 'error' => $validator->errors()]);
         }
+        $profile_id = $data['profile_id'];
+        $PremiumController = new PremiumController();
+        $check_prem = $PremiumController->check_premium($profile_id);
 
         // Получаем все поля из таблицы profile_fields
-        $profile_id = $data['profile_id'];
         $fields = ProfileFields::where('profile_id', $profile_id)->get();
 
         // Заносим значения по умолчанию
@@ -257,14 +261,7 @@ class ProfileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
-    {
-        //$profile->update($request->all());
-        /*
-        $profile=ProfileFields::find($id);
-        $profile->update($request->all());
-        return $profile;
-        */
-        
+    {   
         $data = $request->all();
         /*
         $fields_types = ProfileFieldsTypes::all();
@@ -379,7 +376,7 @@ class ProfileController extends Controller
         $data = $request->all();
 
         $validator = Validator::make($data, [
-            'profile_id' => 'required|exists:profiles,id'
+            'profile_id' => 'required|exists:profiles,user_id'
         ]);
 
         if($validator->fails()){
@@ -396,7 +393,7 @@ class ProfileController extends Controller
 
         $validator = Validator::make($data, [
             'hashtag' => 'required',
-            'profile_id' => 'required|exists:profiles,id'
+            'profile_id' => 'required|exists:profiles,user_id'
         ]);
 
         if($validator->fails()){
