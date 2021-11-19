@@ -273,71 +273,39 @@ class ProfileController extends Controller
     public function update(Request $request)
     {   
         $data = $request->all();
-        /*
         $fields_types = ProfileFieldsTypes::all();
-        $res = array();
+        $response = array();
+        $protected_fields = ['premium'];
 
+        // Проверка на наличие значения в БД
         $validator = Validator::make($data, [
-            'profile_id' => 'required|exists:profiles,id'
-        ]);/*
-        /*
+            // Required - не пустое ли поле
+            // exists - существет ли запись в таблице БД 
+            // после ":" название таблицы, название столбца
+            'profile_id' => 'required|exists:profile_fields,profile_id'
+        ]);
         if($validator->fails()){
-            return response(['error' => $validator->errors()]);
+            return response(['status' => 'error', 'error' => $validator->errors()]);
         }
 
         $profile_id = $data['profile_id'];
-        $check_registered = ProfileFields::where('profile_id', $profile_id)->get();
-        if (count($check_registered) == 0) {
-            return response(['status'=>'error', 'error' => ['profile_id' => 'Profile not registered']]);
+
+        // Пробегаемся по кажому полю профиля и проверяем есть ли оно в передаваемых аргументах
+        // в запросе, а также проверяем можно ли его изменить
+        foreach($fields_types as $field_type){
+            if (array_key_exists($field_type['name'], $data) && !in_array($field_type['name'], $protected_fields)) {
+                $field = ProfileFields::where([
+                                        ['profile_id', '=', $profile_id],
+                                        ['field_type_id', '=', $field_type['id']]])
+                                        ->update(['value' => $data[$field_type['name']]]);
+
+                $response[$field_type['name']] = $data[$field_type['name']];
+            }
         }
 
-        foreach($fields_types as $field_type) {
-            if (!array_key_exists($field_type['name'], $data) && !$field_type['default']) {
-                return response(['status' => 'error', 'error' => [$field_type['name'] => 'Field has no default value']]);
-            }
-            if (!array_key_exists($field_type['name'], $data) && $field_type['default']) {
-                $data[$field_type['name']] = $field_type['default'];
-            }
-            $res[$field_type['id']] = $data[$field_type['name']];
-        }
-
-        foreach($res as $key => $value) {
-            $field = ProfileFields::updateOrCreate([
-                'profile_id' => $profile_id,
-                'field_type_id' => $key,
-                'value' => $value
-            ]);
-        }*/
-        $description = $data['description'];
-        $id_profile = $data['id_profile'];
-        $age_pref = $data['age_pref'];
-        $sex_pref = $data['sex_pref'];
-        $results = DB::select( DB::raw("UPDATE profile_fields SET value =". "'".$description."'" ."
-        WHERE cast(profile_id as int) = $id_profile 
-        AND cast(field_type_id as int) = (SELECT cast(id as int) FROM profile_fields_types WHERE name = 'description')"));
-
-        $results = DB::select( DB::raw("UPDATE profile_fields SET value =". "'".$age_pref."'" ."
-        WHERE cast(profile_id as int) = $id_profile 
-        AND cast(field_type_id as int) = (SELECT cast(id as int) FROM profile_fields_types WHERE name = 'age_pref')"));
-        
-        $results = DB::select( DB::raw("UPDATE profile_fields SET value =". "'".$sex_pref."'" ."
-        WHERE cast(profile_id as int) = $id_profile 
-        AND cast(field_type_id as int) = (SELECT cast(id as int) FROM profile_fields_types WHERE name = 'sex_pref')"));
-
-        return response(['status' => 'ok', 'response' => ['profiles' => $results]]);
-
-        //return response(['status' => 'ok', 'response' => $res], 200);
-        //return response([ 'profile' => new ProfileResource($profile), 'message' => 'Retrieved successfully'], 200);
+        return response(['status' => 'ok', 'response' => $response], 200);
     }
-/*
-    public function update_book(Request $request,$id)
-    {
-        $product=BooksModel::find($id);
-        $product->update($request->all());
-        return $product;
 
-    }
-*/
     /**
      * Remove the specified resource from storage.
      *
