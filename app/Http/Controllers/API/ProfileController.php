@@ -75,7 +75,10 @@ class ProfileController extends Controller
                                         ['profile_id','=', $profile_id],
                                         ['photo_id', '=', 1],
                                         ]) -> update(['photo' => $value]);
-                 $response[] = $value;
+                $field = ProfileFields::create(['profile_id' => $profile_id,
+                                                'field_type_id' => $key,
+                                                'value' => $value]);
+                $response[] = $field->value;
             } else {  
                 $field = ProfileFields::create(['profile_id' => $profile_id,
                                                 'field_type_id' => $key,
