@@ -8,6 +8,7 @@ use Laravel\Socialite\Facades\Socialite;
 use App\User;
 use App\SocialAccount;
 use Illuminate\Support\Str;
+use App\Models\Profile;
 
 /* 
     Authorization via social networks
